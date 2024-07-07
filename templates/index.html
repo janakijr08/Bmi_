@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: palevioletred; 
+            color: white;
+        }
+        .card {
+            background-color: burlywood;
+            color: #000000;
+            margin: 20px;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .card-img-top {
+            height: 400px; 
+            object-fit: cover; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <img src="https://www.mensjournal.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTk2MTM3MTI1MDIxOTUxMTIx/abs.jpg" class="card-img-top img-fluid" alt="physique">
+                    <div class="card-body">
+                        <h5 class="card-title">Calculate Your BMI (Body Mass Index)</h5>
+                        <p class="card-text">This full-stack BMI calculator application is built using Bootstrap framework for the frontend and Python with Flask for the backend, along with MongoDB for data storage.</p>
+                        <p class="card-text">Developed by JR.</p>
+                        <form id="bmi-form">
+                            <div class="form-group">
+                                <label for="weight">Weight (kg):</label>
+                                <input type="number" class="form-control" id="weight" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Height (cm):</label>
+                                <input type="number" step="0.01" class="form-control" id="height" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Calculate BMI</button>
+                        </form>
+                        <div id="result" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://static.vecteezy.com/system/resources/previews/031/094/658/original/diet-plan-man-doing-exercise-and-planning-diet-with-fruit-and-vegetable-guy-doing-yoga-dietary-eating-meal-planning-nutrition-consultation-healthy-food-sport-health-lifestyle-fitness-vector.jpg" class="card-img-top img-fluid" alt="Healthy Diet">
+                    <div class="card-body">
+                        <h5 class="card-title">Healthy Diet</h5>
+                        <p class="card-text">Maintaining a balanced diet is crucial for a healthy body.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://static.vecteezy.com/system/resources/previews/006/897/554/original/sports-and-healthy-food-design-illustration-running-man-and-healthy-food-like-fruit-vegetable-fish-chicken-vector.jpg" class="card-img-top img-fluid" alt="Regular Exercise">
+                    <div class="card-body">
+                        <h5 class="card-title">Regular Exercise</h5>
+                        <p class="card-text">Regular physical activity helps you stay fit and healthy.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <img src="https://femina.wwmindia.com/content/2018/dec/balanced-diet-chart-1545123580.jpg" class="card-img-top img-fluid" alt="Balanced Diet">
+                    <div class="card-body">
+                        <h5 class="card-title">Balanced Diet</h5>
+                        <p class="card-text">"Eat lightly, breathe deeply, live moderately, cultivate cheerfulness and maintain an interest in life." – William Londen</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('bmi-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const weight = document.getElementById('weight').value;
+            const height = document.getElementById('height').value;
+
+            fetch('/bmi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ weight: weight, height: height })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result').innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                } else {
+                    const bmi = data.bmi.toFixed(2);
+                    let bmiCategory;
+
+                    if (bmi < 18.5) {
+                        bmiCategory = "underweight";
+                    } else if (bmi >= 18.5 && bmi <= 24.9) {
+                        bmiCategory = "healthy weight";
+                    } else if (bmi >= 25.0 && bmi <= 29.9) {
+                        bmiCategory = "overweight";
+                    } else {
+                        bmiCategory = "obese";
+                    }
+
+                    document.getElementById('result').innerHTML = `
+                        <div class="alert alert-success">
+                            Your BMI is ${bmi}. It falls within the ${bmiCategory} range.
+                        </div>
+                    `;
+                }
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
+            });
+        });
+    </script>
+</body>
+</html>
